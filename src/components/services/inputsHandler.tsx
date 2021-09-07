@@ -1,7 +1,7 @@
 import React from "react";
-import { ReactInputEvent } from "./events";
+//import { ReactInputEvent } from "./events";
 
-const onInputHandler = async (e: ReactInputEvent) => {
+const onInputHandler = async (e: any) => {
   e.preventDefault();
   console.log(e.target);
 };
