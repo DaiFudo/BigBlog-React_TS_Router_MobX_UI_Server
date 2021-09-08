@@ -15,7 +15,7 @@ interface ValueForm {
 
 const Login: React.FC<ValueForm> = () => {
   const [email, setEmail] = useState("");
-  const [password, setpassword] = useState("");
+  const [password, setPassword] = useState("");
 
   const Handler = async (e: any) => {
     e.preventDefault();
@@ -23,9 +23,12 @@ const Login: React.FC<ValueForm> = () => {
       const data = { email, password };
 
       axios
-        .get("http://localhost:3000/api/users", {})
+        .post("http://localhost:3000/api/users/login", {
+          user: data,
+        })
+
         .then(function (response) {
-          console.log(response);
+          console.log(response.data);
         })
         .catch(function (error) {
           console.log(error);
@@ -52,7 +55,7 @@ const Login: React.FC<ValueForm> = () => {
             placeholder="Email"
           />
           <InputStyle
-            onChange={(e) => setpassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             name="password"
             type="text"
             placeholder="Password"

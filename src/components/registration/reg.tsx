@@ -31,6 +31,7 @@ const Reg: React.FC<ValueForm> = () => {
         })
         .then(function (response) {
           console.log(response);
+          <div>sup</div>;
         })
         .catch(function (error) {
           console.log(error);
