@@ -28,7 +28,9 @@ const Login: React.FC<ValueForm> = () => {
         })
 
         .then(function (response) {
-          console.log(response.data);
+          console.log(response.data.user);
+          const t = response.data.user.token;
+          localStorage.setItem("auth", t);
         })
         .catch(function (error) {
           console.log(error);
