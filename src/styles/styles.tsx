@@ -6,6 +6,7 @@ import {
   Container,
   CssBaseline,
   Avatar,
+  FormControl,
 } from "@material-ui/core";
 import { Link } from "react-router-dom";
 //Header - доаботать адаптив
@@ -103,13 +104,20 @@ export const StyledRow = styled(Box)({
 export const StyledNavigation = styled(Box)({
   display: "flex",
   justifyContent: "space-between",
-
   alignItems: "baseline",
   padding: ".5em 1em",
-  borderBottom: "1px solid #79b6f2",
 });
 export const StyledToggleLink = styled(Box)({
-  paddingRight: "10px",
+  margin: "0px 5px",
+  "&:hover": {
+    cursor: "pointer",
+  },
+  "&.active": {
+    borderBottom: "1px solid #79b6f2",
+  },
+  "&:nth-child(2)": {
+    borderBottom: "1px solid #79b6f2",
+  },
 });
 export const StyledPost = styled(Box)({
   marginTop: "24px",
@@ -164,16 +172,26 @@ export const Pagination = styled(Box)({
   flexDirection: "row",
   listStyleType: "none",
 });
-export const StyledList = styled(Box)({});
+export const StyledList = styled(Box)({
+  "&:nth-child(1)": {
+    backgroundColor: "#79b6f2",
+  },
+});
 export const StyledAttribyteA = styled(Box)({
   position: "relative",
   float: "left",
   padding: ".5rem .75rem",
   marginLeft: "-1px",
-  color: "White",
+
   textDecoration: "none",
-  backgroundColor: "#79b6f2",
   border: "1px solid #ddd",
+  "&:hover": {
+    cursor: "pointer",
+  },
+
+  "&.active": {
+    backgroundColor: "#79b6f2",
+  },
 });
 
 //Footer
@@ -184,7 +202,6 @@ export const StyledFooter = styled(Box)({
   position: "absolute",
   display: "flex",
   backgroundColor: "#f3f3f3",
-  bottom: "0",
   alignItems: "center",
   justifyContent: "center",
 });
@@ -222,5 +239,13 @@ export const InputStyle = styled(TextField)({
   display: "flex",
   margin: "0 auto",
 });
+export const StyledFormControl = styled(FormControl)({
+  display: "flex",
+  margin: "0 0",
+  width: "70%",
+});
+
+export const InputTitle = styled(TextField)({ marginTop: "10px" });
+export const InputDescr = styled(TextField)({ marginTop: "10px" });
 export const StyleContainer = styled(Container)({});
 export const StyleCssBaseline = styled(CssBaseline)({});

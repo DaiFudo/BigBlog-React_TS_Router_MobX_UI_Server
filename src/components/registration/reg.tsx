@@ -30,14 +30,11 @@ const Reg: React.FC<ValueForm> = () => {
           user: data,
         })
         .then(function (response) {
-          console.log(response);
           <div>sup</div>;
         })
         .catch(function (error) {
           console.log(error);
         });
-
-      console.log(data);
     } else {
       alert("Введите все данные.");
     }

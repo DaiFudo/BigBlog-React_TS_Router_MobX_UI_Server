@@ -1,5 +1,4 @@
 import React from "react";
-import { toJS } from "mobx";
 
 import { LinkRout, StyledWrapper } from "../../styles/styles";
 import Header from "../header/header";
@@ -9,7 +8,6 @@ import Footer from "../footer/footer";
 import Store from "../../store/store";
 import { observer } from "mobx-react-lite";
 const Profile: React.FC = observer(() => {
-  console.log(toJS(Store));
   return (
     <>
       <Header />

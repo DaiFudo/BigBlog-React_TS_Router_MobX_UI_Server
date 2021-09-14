@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 import {
   StyledFeed,
   StyledFeedToggle,
@@ -17,23 +18,83 @@ import {
   Pagination,
   StyledList,
   StyledAttribyteA,
+  MyButton,
+  InputTitle,
+  InputDescr,
+  StyledFormControl,
 } from "../../styles/styles";
-const Feed: React.FC = () => {
+import { observer } from "mobx-react-lite";
+import Store from "../../store/store";
+
+/* interface postsInfo {
+  title: string;
+  descr: string;
+  data: string;
+} */
+
+const Feed: React.FC = observer(() => {
+  const navigation = () => {
+    return (
+      <StyledNavigation className="nav__item">
+        <StyledToggleLink component="a" className="nav__link">
+          Global Feed
+        </StyledToggleLink>
+        <StyledToggleLink component="a" className="nav__link">
+          Your Feed
+        </StyledToggleLink>
+      </StyledNavigation>
+    );
+  };
+
+  const vilabilityForm = () => {
+    return (
+      <StyledFormControl>
+        What about you think?
+        <InputTitle
+          multiline
+          variant="outlined"
+          id="standard-basic"
+          label="Title"
+        />
+        <InputDescr
+          id="outlined-multiline-static"
+          label="Descr"
+          multiline
+          rows={4}
+          variant="outlined"
+        />
+        <MyButton type="submit" className="btn">
+          ADD POST!
+        </MyButton>
+      </StyledFormControl>
+    );
+  };
+  const postsInfo = () => {
+    const token = localStorage.getItem("auth");
+    const config = {};
+    axios
+      .get("http://localhost:3000/api/articles")
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <StyledFeed>
       <StyledRow className="row">
         <StyledFeedToggle className="feed__toggle">
-          <StyledNavigation className="nav__item">
-            <StyledToggleLink component="a" className="nav__link">
-              Your Feed
-            </StyledToggleLink>
-            <StyledToggleLink component="a" className="nav__link">
-              Global Feed
-            </StyledToggleLink>
-          </StyledNavigation>
+          <StyledNavigation>{navigation}</StyledNavigation>
         </StyledFeedToggle>
+        <StyledFormControl>
+          {localStorage.getItem("auth") ? vilabilityForm : <></>}
+        </StyledFormControl>
+
         <StyledPost className="content">
           <StyledPostContent className="post-content">
+            {postsInfo()}
             <StyledInfo className="info">
               <div>
                 <StyledAvatar
@@ -77,7 +138,7 @@ const Feed: React.FC = () => {
         </StyledTags>
         <nav>
           <Pagination component="ul" className="pagination">
-            <StyledList component="li" className="page-item active">
+            <StyledList component="li" className="page-item">
               <StyledAttribyteA component="a" className="page-link">
                 1
               </StyledAttribyteA>
@@ -93,5 +154,5 @@ const Feed: React.FC = () => {
       </StyledRow>
     </StyledFeed>
   );
-};
+});
 export default Feed;

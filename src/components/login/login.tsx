@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 import Store from "../../store/store";
 import { observer } from "mobx-react";
-import { toJS } from "mobx";
 
 import {
   StyledBox,
