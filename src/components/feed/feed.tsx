@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   StyledFeed,
@@ -22,17 +22,19 @@ import {
   InputTitle,
   InputDescr,
   StyledFormControl,
+  StyledFormApplication,
 } from "../../styles/styles";
 import { observer } from "mobx-react-lite";
 import Store from "../../store/store";
 
-/* interface postsInfo {
-  title: string;
-  descr: string;
-  data: string;
-} */
+interface postsInfo {
+  title?: string;
+  descr?: string;
+  author?: string;
+  data?: string;
+}
 
-const Feed: React.FC = observer(() => {
+const Feed: React.FC<postsInfo> = observer(() => {
   const navigation = () => {
     return (
       <StyledNavigation className="nav__item">
@@ -47,8 +49,26 @@ const Feed: React.FC = observer(() => {
   };
 
   const vilabilityForm = () => {
+    const Handler = async (e: any) => {
+      e.preventDefault();
+      const token = localStorage.getItem("auth");
+      const config = {};
+      axios
+        .post("http://localhost:3000/api/articles")
+        .then((response) => {
+          //console.log(response);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    };
+
     return (
-      <StyledFormControl>
+      <StyledFormApplication
+        onSubmit={Handler}
+        component="form"
+        className="app-form"
+      >
         What about you think?
         <InputTitle
           multiline
@@ -66,21 +86,25 @@ const Feed: React.FC = observer(() => {
         <MyButton type="submit" className="btn">
           ADD POST!
         </MyButton>
-      </StyledFormControl>
+      </StyledFormApplication>
     );
   };
-  const postsInfo = () => {
-    const token = localStorage.getItem("auth");
-    const config = {};
+
+  const [data, setData] = useState<
+    { title: string; description: string; author: { username: string } }[]
+  >([]);
+
+  useEffect(() => {
     axios
       .get("http://localhost:3000/api/articles")
       .then((response) => {
-        console.log(response);
+        const a = response.data.articles;
+        setData(a);
       })
       .catch((error) => {
         console.log(error);
       });
-  };
+  }, []);
 
   return (
     <StyledFeed>
@@ -89,41 +113,41 @@ const Feed: React.FC = observer(() => {
           <StyledNavigation>{navigation}</StyledNavigation>
         </StyledFeedToggle>
         <StyledFormControl>
-          {localStorage.getItem("auth") ? vilabilityForm : <></>}
+          {localStorage.getItem("auth") ? vilabilityForm : <div>asdasd</div>}
         </StyledFormControl>
-
-        <StyledPost className="content">
-          <StyledPostContent className="post-content">
-            {postsInfo()}
-            <StyledInfo className="info">
-              <div>
-                <StyledAvatar
-                  src="https://static.productionready.io/images/smiley-cyrus.jpg"
-                  alt="img"
-                />
-                <a className="author" href="author">
-                  Dai_Fudo
-                  <span className="date">
-                    <br />
-                    September 5, 2021
-                  </span>
-                </a>
-              </div>
-
-              <StyledLike className="like">
-                <span>like</span>
-              </StyledLike>
-            </StyledInfo>
-            <StyledTitle component="h1" className="title">
-              Lorem title title title title title adipisicing elit.
-            </StyledTitle>
-            <StyledDescription component="p" className="description">
-              description description description sit amet description
-              adipisicing elit. Enim voluptatem iure doloremque maxime
-              voluptatibus commodi nesciunt optio ea, incidunt excepturi.
-            </StyledDescription>
-          </StyledPostContent>
-        </StyledPost>
+        {data.map((item) => {
+          console.log(item);
+          return (
+            <StyledPost className="content">
+              <StyledPostContent className="post-content">
+                <StyledInfo className="info">
+                  <div>
+                    <StyledAvatar
+                      src="https://static.productionready.io/images/smiley-cyrus.jpg"
+                      alt="img"
+                    />
+                    <a className="author" href="author">
+                      {item.author.username}
+                      <span className="date">
+                        <br />
+                        September 5, 2021
+                      </span>
+                    </a>
+                  </div>
+                  <StyledLike className="like">
+                    <span>like</span>
+                  </StyledLike>
+                </StyledInfo>
+                <StyledTitle component="h1" className="title">
+                  {item.title}
+                </StyledTitle>
+                <StyledDescription component="p" className="description">
+                  {item.description}
+                </StyledDescription>
+              </StyledPostContent>
+            </StyledPost>
+          );
+        })}
 
         <StyledTags className="tags">
           <StyledTag component="p" className="all-tags">
@@ -147,7 +171,7 @@ const Feed: React.FC = observer(() => {
               <StyledAttribyteA className="page-link">2</StyledAttribyteA>
             </StyledList>
             <StyledList className="page-item">
-              <StyledAttribyteA className="page-link">2</StyledAttribyteA>
+              <StyledAttribyteA className="page-link">3</StyledAttribyteA>
             </StyledList>
           </Pagination>
         </nav>
