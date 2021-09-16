@@ -7,8 +7,7 @@ import {
   InputStyle,
   StyledFormApplication,
 } from "../../styles/styles";
-/* import onInputHandler from "../services/inputsHandler";
-interface SignUpFormProps {} */
+
 interface ValueForm {
   nickname?: string;
   email?: string;

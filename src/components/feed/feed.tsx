@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+
 import {
   StyledFeed,
   StyledFeedToggle,
@@ -22,8 +23,11 @@ import {
   InputTitle,
   InputDescr,
   StyledFormControl,
-  StyledFormApplication,
+  StyledFormApplicationFeed,
+  DisLike,
+  Like,
 } from "../../styles/styles";
+import { useHistory } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import Store from "../../store/store";
 
@@ -39,46 +43,81 @@ const Feed: React.FC<postsInfo> = observer(() => {
     return (
       <StyledNavigation className="nav__item">
         <StyledToggleLink component="a" className="nav__link">
-          Global Feed
+          Your Feed
         </StyledToggleLink>
         <StyledToggleLink component="a" className="nav__link">
-          Your Feed
+          Global Feed
         </StyledToggleLink>
       </StyledNavigation>
     );
   };
 
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [email, setEmail] = useState(Store.email);
+  const [username, setUsername] = useState(Store.username);
+  const [updateArticles, setStatusArticles] = useState(false); // обновление состояния постов используется в axios и useEffect.
+
   const vilabilityForm = () => {
     const Handler = async (e: any) => {
       e.preventDefault();
-      const token = localStorage.getItem("auth");
-      const config = {};
-      axios
-        .post("http://localhost:3000/api/articles")
-        .then((response) => {
-          //console.log(response);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+
+      if (
+        (title && description) !== "" &&
+        title.length <= 20 &&
+        description.length <= 120
+      ) {
+        const postInfo = { title, description, email, author: { username } };
+        const token = localStorage.getItem("auth");
+        const config = {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        };
+        axios
+          .post(
+            "http://localhost:3000/api/articles",
+            {
+              article: postInfo,
+            },
+            config
+          )
+          .then((response) => {
+            console.log(response);
+            setStatusArticles(true);
+            e.target.value = "";
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      } else {
+        alert(
+          "Enter fewer characters in the title. Dont leave any forms blank."
+        );
+      }
     };
 
     return (
-      <StyledFormApplication
+      <StyledFormApplicationFeed
         onSubmit={Handler}
         component="form"
         className="app-form"
       >
         What about you think?
         <InputTitle
+          onChange={(e) => setTitle(e.target.value)}
           multiline
           variant="outlined"
           id="standard-basic"
           label="Title"
+          type="text"
+          placeholder="asd"
         />
         <InputDescr
+          onChange={(e) => setDescription(e.target.value)}
           id="outlined-multiline-static"
-          label="Descr"
+          label="Description"
+          type="text"
           multiline
           rows={4}
           variant="outlined"
@@ -86,12 +125,17 @@ const Feed: React.FC<postsInfo> = observer(() => {
         <MyButton type="submit" className="btn">
           ADD POST!
         </MyButton>
-      </StyledFormApplication>
+      </StyledFormApplicationFeed>
     );
   };
 
   const [data, setData] = useState<
-    { title: string; description: string; author: { username: string } }[]
+    {
+      title: string;
+      description: string;
+      author: { username: string };
+      createdAt: string;
+    }[]
   >([]);
 
   useEffect(() => {
@@ -100,11 +144,30 @@ const Feed: React.FC<postsInfo> = observer(() => {
       .then((response) => {
         const a = response.data.articles;
         setData(a);
+        const history = useHistory();
+        history.push("/profile");
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, []); // сюда нужно добавить зависимость которая будет обновлять посты при отправке данных на сервер
+
+  useEffect(() => {
+    if (updateArticles) {
+      axios
+        .get("http://localhost:3000/api/articles")
+        .then((response) => {
+          const a = response.data.articles;
+          setStatusArticles(false);
+          setData(a);
+          const history = useHistory();
+          history.push("/profile");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    }
+  }, [updateArticles]); // сюда нужно добавить зависимость которая будет обновлять посты при отправке данных на сервер
 
   return (
     <StyledFeed>
@@ -116,7 +179,9 @@ const Feed: React.FC<postsInfo> = observer(() => {
           {localStorage.getItem("auth") ? vilabilityForm : <div>asdasd</div>}
         </StyledFormControl>
         {data.map((item) => {
+          const data = item.createdAt.slice(0, 10);
           console.log(item);
+
           return (
             <StyledPost className="content">
               <StyledPostContent className="post-content">
@@ -130,18 +195,19 @@ const Feed: React.FC<postsInfo> = observer(() => {
                       {item.author.username}
                       <span className="date">
                         <br />
-                        September 5, 2021
+                        {data}
                       </span>
                     </a>
                   </div>
-                  <StyledLike className="like">
+
+                  <Like className="like">
                     <span>like</span>
-                  </StyledLike>
+                  </Like>
                 </StyledInfo>
                 <StyledTitle component="h1" className="title">
                   {item.title}
                 </StyledTitle>
-                <StyledDescription component="p" className="description">
+                <StyledDescription component="span" className="description">
                   {item.description}
                 </StyledDescription>
               </StyledPostContent>

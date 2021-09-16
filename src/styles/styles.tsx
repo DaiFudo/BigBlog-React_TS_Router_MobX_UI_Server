@@ -8,6 +8,9 @@ import {
   Avatar,
   FormControl,
 } from "@material-ui/core";
+import FavoriteBorderRoundedIcon from "@material-ui/icons/FavoriteBorderRounded";
+import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
+
 import { Link } from "react-router-dom";
 //Header - доаботать адаптив
 export const StyledHeader = styled(Box)({
@@ -214,6 +217,11 @@ export const StyledFormApplication = styled(Box)({
   display: "flex",
   flexDirection: "column",
 });
+export const StyledFormApplicationFeed = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+  width: "70%",
+});
 
 export const StyledBox = styled(Box)({
   textTransform: "uppercase",
@@ -249,3 +257,14 @@ export const InputTitle = styled(TextField)({ marginTop: "10px" });
 export const InputDescr = styled(TextField)({ marginTop: "10px" });
 export const StyleContainer = styled(Container)({});
 export const StyleCssBaseline = styled(CssBaseline)({});
+
+//icons
+
+export const Like = styled(FavoriteBorderRoundedIcon)({
+  width: "20px",
+  height: "20px",
+});
+export const DisLike = styled(FavoriteRoundedIcon)({
+  width: "20px",
+  height: "20px",
+});
