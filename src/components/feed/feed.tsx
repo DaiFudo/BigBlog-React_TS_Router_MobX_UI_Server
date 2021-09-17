@@ -10,7 +10,6 @@ import {
   StyledToggleLink,
   StyledAvatar,
   StyledInfo,
-  StyledLike,
   StyledPostContent,
   StyledTitle,
   StyledDescription,
@@ -30,6 +29,7 @@ import {
 import { useHistory } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import Store from "../../store/store";
+import internal from "stream";
 
 interface postsInfo {
   title?: string;
@@ -43,10 +43,10 @@ const Feed: React.FC<postsInfo> = observer(() => {
     return (
       <StyledNavigation className="nav__item">
         <StyledToggleLink component="a" className="nav__link">
-          Your Feed
+          Your Posts
         </StyledToggleLink>
         <StyledToggleLink component="a" className="nav__link">
-          Global Feed
+          Global Posts
         </StyledToggleLink>
       </StyledNavigation>
     );
@@ -111,7 +111,6 @@ const Feed: React.FC<postsInfo> = observer(() => {
           id="standard-basic"
           label="Title"
           type="text"
-          placeholder="asd"
         />
         <InputDescr
           onChange={(e) => setDescription(e.target.value)}
@@ -131,6 +130,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
 
   const [data, setData] = useState<
     {
+      slug: string & number & symbol;
       title: string;
       description: string;
       author: { username: string };
@@ -144,13 +144,11 @@ const Feed: React.FC<postsInfo> = observer(() => {
       .then((response) => {
         const a = response.data.articles;
         setData(a);
-        const history = useHistory();
-        history.push("/profile");
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []); // сюда нужно добавить зависимость которая будет обновлять посты при отправке данных на сервер
+  }, []); // а тут нет зависимости что бы сначала было пусто и только потом пошло заполнение данными с axios
 
   useEffect(() => {
     if (updateArticles) {
@@ -158,6 +156,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
         .get("http://localhost:3000/api/articles")
         .then((response) => {
           const a = response.data.articles;
+
           setStatusArticles(false);
           setData(a);
           const history = useHistory();
@@ -167,8 +166,25 @@ const Feed: React.FC<postsInfo> = observer(() => {
           console.log(error);
         });
     }
-  }, [updateArticles]); // сюда нужно добавить зависимость которая будет обновлять посты при отправке данных на сервер
+  }, [updateArticles]); // зависимость обновляющая посты при отправке данных на сервер
 
+  const DeleteItem = async (key: any) => {
+    const config = {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("auth")}`,
+      },
+    };
+    axios
+      .delete(`http://localhost:3000/api/articles/${key}`, config)
+      .then((response) => {
+        console.log(response);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+    console.log("deleted no");
+  };
   return (
     <StyledFeed>
       <StyledRow className="row">
@@ -176,14 +192,30 @@ const Feed: React.FC<postsInfo> = observer(() => {
           <StyledNavigation>{navigation}</StyledNavigation>
         </StyledFeedToggle>
         <StyledFormControl>
-          {localStorage.getItem("auth") ? vilabilityForm : <div>asdasd</div>}
+          {localStorage.getItem("auth") && vilabilityForm}
         </StyledFormControl>
         {data.map((item) => {
-          const data = item.createdAt.slice(0, 10);
-          console.log(item);
+          const date = item.createdAt.slice(0, 10);
 
+          /* const LikeChecker = (e: any) => {
+            e.preventDefault();
+            const Like = () => {
+              return (
+                <>
+                  <DisLike></DisLike>
+                </>
+              );
+            };
+            const Dislike = () => {
+              return (
+                <>
+                  <DisLike></DisLike>
+                </>
+              );
+            };
+          }; */
           return (
-            <StyledPost className="content">
+            <StyledPost className="content" key={item.slug}>
               <StyledPostContent className="post-content">
                 <StyledInfo className="info">
                   <div>
@@ -195,14 +227,10 @@ const Feed: React.FC<postsInfo> = observer(() => {
                       {item.author.username}
                       <span className="date">
                         <br />
-                        {data}
+                        {date}
                       </span>
                     </a>
                   </div>
-
-                  <Like className="like">
-                    <span>like</span>
-                  </Like>
                 </StyledInfo>
                 <StyledTitle component="h1" className="title">
                   {item.title}
@@ -210,6 +238,13 @@ const Feed: React.FC<postsInfo> = observer(() => {
                 <StyledDescription component="span" className="description">
                   {item.description}
                 </StyledDescription>
+                <button
+                  onClick={() => {
+                    DeleteItem(item.slug);
+                  }}
+                >
+                  deletePost
+                </button>
               </StyledPostContent>
             </StyledPost>
           );

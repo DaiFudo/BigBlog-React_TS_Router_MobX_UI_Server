@@ -13,6 +13,9 @@ const Header: React.FC = observer(() => {
   const history = useHistory();
   const logOut = () => {
     localStorage.removeItem("auth");
+    localStorage.removeItem("username");
+    localStorage.removeItem("email");
+
     history.push("/main");
   };
 
