@@ -13,14 +13,6 @@ const Profile: React.FC = observer(() => {
       <Header />
       <Banner />
       <Feed />
-      <StyledWrapper>
-        <span className="sup-message">
-          Account {Store?.username} authorization - access.
-        </span>
-        <div>
-          <LinkRout to="/">Main feed</LinkRout>
-        </div>
-      </StyledWrapper>
       <Footer />
     </>
   );

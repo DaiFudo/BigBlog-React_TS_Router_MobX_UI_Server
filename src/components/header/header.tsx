@@ -22,7 +22,7 @@ const Header: React.FC = observer(() => {
   const regOn = () => {
     return (
       <StyledWrapper>
-        <LinkRout to="/">Home</LinkRout>
+        <LinkRout to="/">Main</LinkRout>
         <LinkRout to="/profile">Profile</LinkRout>
         <LinkRout onClick={logOut} to="/">
           Sign Out
@@ -34,7 +34,7 @@ const Header: React.FC = observer(() => {
   const regOff = () => {
     return (
       <StyledWrapper>
-        <LinkRout to="/">Home</LinkRout>
+        <LinkRout to="/">Main</LinkRout>
         <LinkRout to="/login">SignIn</LinkRout>
         <LinkRout to="/reg">SignUp</LinkRout>
       </StyledWrapper>

@@ -37,8 +37,6 @@ const Login: React.FC<ValueForm> = observer(() => {
         .then(function (response) {
           console.log(response.data.user);
           const t = response.data.user.token;
-
-          console.log(response.data.user.username, "is username");
           localStorage.setItem("auth", t);
           localStorage.setItem("email", email);
           localStorage.setItem("username", response.data.user.username);

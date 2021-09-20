@@ -14,6 +14,7 @@ class Store {
   postInfo?: {};
   username = "";
   email = "";
+  tagList = [];
 
   constructor() {
     makeAutoObservable(this);

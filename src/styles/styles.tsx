@@ -10,6 +10,7 @@ import {
 } from "@material-ui/core";
 import FavoriteBorderRoundedIcon from "@material-ui/icons/FavoriteBorderRounded";
 import FavoriteRoundedIcon from "@material-ui/icons/FavoriteRounded";
+import BackspaceIcon from "@material-ui/icons/Backspace";
 
 import { Link } from "react-router-dom";
 //Header - доаботать адаптив
@@ -152,6 +153,7 @@ export const StyledDescription = styled(Box)({
   paddingBottom: "5px",
   borderBottom: "1px solid #79b6f2",
 });
+
 export const StyledTags = styled(Box)({
   display: "block",
   position: "absolute",
@@ -255,16 +257,26 @@ export const StyledFormControl = styled(FormControl)({
 
 export const InputTitle = styled(TextField)({ marginTop: "10px" });
 export const InputDescr = styled(TextField)({ marginTop: "10px" });
+export const InputTags = styled(TextField)({
+  marginTop: "10px",
+});
 export const StyleContainer = styled(Container)({});
 export const StyleCssBaseline = styled(CssBaseline)({});
 
 //icons
 
 export const Like = styled(FavoriteBorderRoundedIcon)({
-  width: "20px",
-  height: "20px",
+  width: "30px",
+  height: "30px",
+  paddingLeft: "10px",
 });
 export const DisLike = styled(FavoriteRoundedIcon)({
-  width: "20px",
-  height: "20px",
+  width: "30px",
+  height: "30px",
+  paddingLeft: "10px",
+});
+export const Trash = styled(BackspaceIcon)({
+  width: "30px",
+  height: "30px",
+  paddingLeft: "10px",
 });

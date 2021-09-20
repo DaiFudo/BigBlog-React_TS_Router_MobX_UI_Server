@@ -21,19 +21,21 @@ import {
   MyButton,
   InputTitle,
   InputDescr,
+  InputTags,
   StyledFormControl,
   StyledFormApplicationFeed,
   DisLike,
   Like,
+  Trash,
 } from "../../styles/styles";
 import { useHistory } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import Store from "../../store/store";
-import internal from "stream";
 
 interface postsInfo {
   title?: string;
   descr?: string;
+  tags?: string;
   author?: string;
   data?: string;
 }
@@ -42,10 +44,18 @@ const Feed: React.FC<postsInfo> = observer(() => {
   const navigation = () => {
     return (
       <StyledNavigation className="nav__item">
-        <StyledToggleLink component="a" className="nav__link">
+        <StyledToggleLink
+          onClick={YourPosts}
+          component="a"
+          className="nav__link"
+        >
           Your Posts
         </StyledToggleLink>
-        <StyledToggleLink component="a" className="nav__link">
+        <StyledToggleLink
+          onClick={GlobalPosts}
+          component="a"
+          className="nav__link"
+        >
           Global Posts
         </StyledToggleLink>
       </StyledNavigation>
@@ -54,6 +64,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [tagList, setTags] = useState("");
   const [email, setEmail] = useState(Store.email);
   const [username, setUsername] = useState(Store.username);
   const [updateArticles, setStatusArticles] = useState(false); // обновление состояния постов используется в axios и useEffect.
@@ -61,13 +72,30 @@ const Feed: React.FC<postsInfo> = observer(() => {
   const vilabilityForm = () => {
     const Handler = async (e: any) => {
       e.preventDefault();
+      console.log(e);
+
+      console.log(tagList);
+
+      const a = tagList.trim().split(" ");
+      /*       setTags(a)
+
+      console.log(tagList);
+      console.log(setTags); */
+
+      //console.log(tagList.split(" "));
 
       if (
         (title && description) !== "" &&
         title.length <= 20 &&
         description.length <= 120
       ) {
-        const postInfo = { title, description, email, author: { username } };
+        const postInfo = {
+          title,
+          description,
+          email,
+          tagList: a, // тут МБ ОШИБКА
+          author: { username },
+        };
         const token = localStorage.getItem("auth");
         const config = {
           headers: {
@@ -121,6 +149,15 @@ const Feed: React.FC<postsInfo> = observer(() => {
           rows={4}
           variant="outlined"
         />
+        <InputTags
+          onChange={(e) => setTags(e.target.value)}
+          type="text"
+          id="standard-basic"
+          label=""
+          variant="standard"
+          multiline
+          rows={1}
+        />
         <MyButton type="submit" className="btn">
           ADD POST!
         </MyButton>
@@ -168,6 +205,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
     }
   }, [updateArticles]); // зависимость обновляющая посты при отправке данных на сервер
 
+  // Удаление и лайк
   const DeleteItem = async (key: any) => {
     const config = {
       headers: {
@@ -177,6 +215,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
     axios
       .delete(`http://localhost:3000/api/articles/${key}`, config)
       .then((response) => {
+        setStatusArticles(true);
         console.log(response);
       })
       .catch((error) => {
@@ -185,6 +224,46 @@ const Feed: React.FC<postsInfo> = observer(() => {
 
     console.log("deleted no");
   };
+
+  const LikeDisLike = async (key: any) => {
+    console.log("like");
+  };
+
+  //посты
+  const YourPosts = async (e: any) => {
+    console.log("click on YourPosts", e);
+
+    axios
+      .get(
+        `http://localhost:3000/api/articles?author=${localStorage.getItem(
+          "username"
+        )}`
+      )
+      .then((response) => {
+        const a = response.data.articles;
+        setData(a);
+        setStatusArticles(false);
+        console.log(response.data.articles);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const GlobalPosts = async (e: any) => {
+    console.log("click on GlobalPosts", e);
+    axios
+      .get(`http://localhost:3000/api/articles?author=`)
+      .then((response) => {
+        const a = response.data.articles;
+        setData(a);
+        setStatusArticles(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <StyledFeed>
       <StyledRow className="row">
@@ -192,39 +271,27 @@ const Feed: React.FC<postsInfo> = observer(() => {
           <StyledNavigation>{navigation}</StyledNavigation>
         </StyledFeedToggle>
         <StyledFormControl>
-          {localStorage.getItem("auth") && vilabilityForm}
+          {localStorage.getItem("auth") &&
+          window.location.href === "http://localhost:3001/profile" ? (
+            vilabilityForm
+          ) : (
+            <></>
+          )}
         </StyledFormControl>
         {data.map((item) => {
           const date = item.createdAt.slice(0, 10);
 
-          /* const LikeChecker = (e: any) => {
-            e.preventDefault();
-            const Like = () => {
-              return (
-                <>
-                  <DisLike></DisLike>
-                </>
-              );
-            };
-            const Dislike = () => {
-              return (
-                <>
-                  <DisLike></DisLike>
-                </>
-              );
-            };
-          }; */
           return (
             <StyledPost className="content" key={item.slug}>
               <StyledPostContent className="post-content">
                 <StyledInfo className="info">
                   <div>
                     <StyledAvatar
-                      src="https://static.productionready.io/images/smiley-cyrus.jpg"
+                      src="https://i.stack.imgur.com/xHWG8.jpg"
                       alt="img"
                     />
                     <a className="author" href="author">
-                      {item.author.username}
+                      {item.author.username.toUpperCase()}
                       <span className="date">
                         <br />
                         {date}
@@ -238,13 +305,12 @@ const Feed: React.FC<postsInfo> = observer(() => {
                 <StyledDescription component="span" className="description">
                   {item.description}
                 </StyledDescription>
-                <button
+                <Trash
                   onClick={() => {
                     DeleteItem(item.slug);
                   }}
-                >
-                  deletePost
-                </button>
+                ></Trash>
+                <DisLike onClick={LikeDisLike}></DisLike>
               </StyledPostContent>
             </StyledPost>
           );

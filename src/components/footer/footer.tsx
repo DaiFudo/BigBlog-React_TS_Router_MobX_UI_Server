@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="logo">React.JS</div>
       <div className="attribution">
         © 2021. An interactive learning project from
-        <a href="https://thinkster.io">Wilix</a>. Code licensed under MIT.
+        <a href="https://wilix.ru/">Wilix</a>. Code licensed under MIT.
       </div>
     </StyledFooter>
   );

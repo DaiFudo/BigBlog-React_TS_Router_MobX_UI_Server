@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 import axios from "axios";
 import {
   StyledBox,
@@ -19,6 +20,7 @@ const Reg: React.FC<ValueForm> = () => {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const history = useHistory();
 
   const Handler = async (e: any) => {
     e.preventDefault();
@@ -29,7 +31,11 @@ const Reg: React.FC<ValueForm> = () => {
           user: data,
         })
         .then(function (response) {
-          <div>sup</div>;
+          const t = response.data.user.token;
+          localStorage.setItem("auth", t);
+          localStorage.setItem("email", email);
+          localStorage.setItem("username", response.data.user.username);
+          history.push("/profile");
         })
         .catch(function (error) {
           console.log(error);

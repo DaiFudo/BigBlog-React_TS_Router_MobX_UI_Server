@@ -1,6 +1,8 @@
 import React from "react";
 import { observer } from "mobx-react-lite";
 import Store from "../../store/store";
+import { useHistory } from "react-router-dom";
+
 import {
   StyledBanner,
   StyledLogoBanner,
@@ -9,12 +11,13 @@ import {
 
 const Banner: React.FC = observer(() => {
   const regOn = () => {
-    console.log(Store);
-
+    if (!localStorage.getItem("auth")) {
+      history.push("/");
+    }
     return (
       <StyledBanner className="banner">
         <StyledLogoBanner className="logo__banner">
-          You are in the profile
+          You are in the profile 😘
         </StyledLogoBanner>
         <StyledTitleBanner className="title">
           Authorization - {localStorage.getItem("username")?.toUpperCase()}
@@ -22,7 +25,7 @@ const Banner: React.FC = observer(() => {
       </StyledBanner>
     );
   };
-
+  const history = useHistory();
   const regOff = () => {
     return (
       <div>
@@ -35,10 +38,15 @@ const Banner: React.FC = observer(() => {
       </div>
     );
   };
-  return (
+
+  if (window.location.href === "http://localhost:3001/") {
+    return <StyledBanner className="banner">{regOff}</StyledBanner>;
+  }
+  return <StyledBanner className="banner">{regOn}</StyledBanner>;
+  /* return (
     <StyledBanner className="banner">
       {localStorage.getItem("auth") ? regOn : regOff}
     </StyledBanner>
-  );
+  ); */
 });
 export default Banner;
