@@ -93,7 +93,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
           title,
           description,
           email,
-          tagList: a, // тут МБ ОШИБКА
+          tagList: a,
           author: { username },
         };
         const token = localStorage.getItem("auth");
@@ -172,6 +172,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
       description: string;
       author: { username: string };
       createdAt: string;
+      tagList: string & [];
     }[]
   >([]);
 
@@ -317,16 +318,35 @@ const Feed: React.FC<postsInfo> = observer(() => {
         })}
 
         <StyledTags className="tags">
-          <StyledTag component="p" className="all-tags">
-            Hentai
-          </StyledTag>
-          <StyledTag component="p" className="all-tags">
-            Anime
-          </StyledTag>
-          <StyledTag component="p" className="all-tags">
-            Yety
-          </StyledTag>
+          {data.map((item) => {
+            item.tagList.filter((el) => el !== null);
+            console.log(item, "нет пустышек");
+
+            const SearchPost = async (e: any) => {
+              e.preventDefault();
+              console.log(e.target);
+              axios
+                .get(`http://localhost:3000/api/articles?author=`)
+                .then((response) => {
+                  const a = response.data.articles;
+                  setData(a);
+                  setStatusArticles(false);
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            };
+
+            return (
+              <StyledTag key={item.slug} component="p" className="all-tags">
+                <a onClick={SearchPost} href="/">
+                  {item.tagList}
+                </a>
+              </StyledTag>
+            );
+          })}
         </StyledTags>
+
         <nav>
           <Pagination component="ul" className="pagination">
             <StyledList component="li" className="page-item">

@@ -16,7 +16,7 @@ const Header: React.FC = observer(() => {
     localStorage.removeItem("username");
     localStorage.removeItem("email");
 
-    history.push("/main");
+    history.push("/");
   };
 
   const regOn = () => {
