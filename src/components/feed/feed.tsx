@@ -27,6 +27,10 @@ import {
   DisLike,
   Like,
   Trash,
+  StyleContainer,
+  StyledTagA,
+  StyleWrapperIcons,
+  StyleTextPosts,
 } from "../../styles/styles";
 import { useHistory } from "react-router-dom";
 import { observer } from "mobx-react-lite";
@@ -72,17 +76,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
   const vilabilityForm = () => {
     const Handler = async (e: any) => {
       e.preventDefault();
-      console.log(e);
-
-      console.log(tagList);
-
       const a = tagList.trim().split(" ");
-      /*       setTags(a)
-
-      console.log(tagList);
-      console.log(setTags); */
-
-      //console.log(tagList.split(" "));
 
       if (
         (title && description) !== "" &&
@@ -113,7 +107,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
           .then((response) => {
             console.log(response);
             setStatusArticles(true);
-            e.target.value = "";
+            e.target.reset();
           })
           .catch((error) => {
             console.log(error);
@@ -130,6 +124,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
         onSubmit={Handler}
         component="form"
         className="app-form"
+        id="0"
       >
         What about you think?
         <InputTitle
@@ -300,18 +295,25 @@ const Feed: React.FC<postsInfo> = observer(() => {
                     </a>
                   </div>
                 </StyledInfo>
-                <StyledTitle component="h1" className="title">
-                  {item.title}
-                </StyledTitle>
-                <StyledDescription component="span" className="description">
-                  {item.description}
-                </StyledDescription>
-                <Trash
-                  onClick={() => {
-                    DeleteItem(item.slug);
-                  }}
-                ></Trash>
-                <DisLike onClick={LikeDisLike}></DisLike>
+                <StyleContainer>
+                  <StyleTextPosts>
+                    <StyledTitle component="h1" className="title">
+                      {item.title}
+                    </StyledTitle>
+
+                    <StyledDescription component="span" className="description">
+                      {item.description}
+                    </StyledDescription>
+                  </StyleTextPosts>
+                  <StyleWrapperIcons>
+                    <Trash
+                      onClick={() => {
+                        DeleteItem(item.slug);
+                      }}
+                    ></Trash>
+                    <DisLike onClick={LikeDisLike}></DisLike>
+                  </StyleWrapperIcons>
+                </StyleContainer>
               </StyledPostContent>
             </StyledPost>
           );
@@ -319,15 +321,16 @@ const Feed: React.FC<postsInfo> = observer(() => {
 
         <StyledTags className="tags">
           {data.map((item) => {
-            item.tagList.filter((el) => el !== null);
-            console.log(item, "нет пустышек");
-
             const SearchPost = async (e: any) => {
               e.preventDefault();
-              console.log(e.target);
+              const tag = e.target.innerText;
+              console.log(item.tagList.slice());
+
               axios
-                .get(`http://localhost:3000/api/articles?author=`)
+                .get(`http://localhost:3000/api/articles?tag=${tag}`)
                 .then((response) => {
+                  console.log(response);
+
                   const a = response.data.articles;
                   setData(a);
                   setStatusArticles(false);
@@ -337,13 +340,20 @@ const Feed: React.FC<postsInfo> = observer(() => {
                 });
             };
 
-            return (
-              <StyledTag key={item.slug} component="p" className="all-tags">
-                <a onClick={SearchPost} href="/">
-                  {item.tagList}
-                </a>
-              </StyledTag>
-            );
+            if (item.tagList) {
+              const tens = item.tagList.filter((el) => el !== null);
+              console.log(tens, "tens");
+
+              const tagsShorts = item.tagList.slice(0, 1);
+              const tenTags = tagsShorts.slice(0, 10);
+              return (
+                <StyledTag key={item.slug} component="p" className="all-tags">
+                  <StyledTagA component="a" onClick={SearchPost}>
+                    {tenTags}
+                  </StyledTagA>
+                </StyledTag>
+              );
+            }
           })}
         </StyledTags>
 

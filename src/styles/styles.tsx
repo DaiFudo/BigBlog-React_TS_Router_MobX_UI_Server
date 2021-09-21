@@ -30,16 +30,21 @@ export const StyledLogo = styled(Box)({
 });
 export const StyledWrapper = styled(Box)({
   fontSize: "16px",
-  display: "flex",
   flexDirection: "row",
   color: "#000000",
-  opacity: "30.0%",
 });
 export const LinkRout = styled(Link)({
-  padding: "0 10px 0 0",
+  padding: "0 10px 0 10px",
   textDecoration: "none",
-
   fontFamily: "Oswald",
+  opacity: "30.0%",
+
+  "&:hover": {
+    fontSize: "125%",
+    transition: "all 0.2s ease",
+    borderBottom: "1px solid #79b6f2",
+    opacity: "100%",
+  },
 });
 export const MyButton = styled(Button)({
   marginTop: "10px",
@@ -113,8 +118,11 @@ export const StyledNavigation = styled(Box)({
 });
 export const StyledToggleLink = styled(Box)({
   margin: "0px 5px",
+  transition: "all 0.5s ease",
   "&:hover": {
     cursor: "pointer",
+    fontSize: "125%",
+    transition: "all 0.2s ease",
   },
   "&.active": {
     borderBottom: "1px solid #79b6f2",
@@ -136,7 +144,7 @@ export const StyledInfo = styled(Box)({
   display: "flex",
   flexDirection: "row",
   justifyContent: "space-between",
-  paddingLeft: "5px",
+  padding: "14px 0px 0px 16px",
 });
 export const StyledLike = styled(Button)({
   width: "65px",
@@ -145,30 +153,62 @@ export const StyledLike = styled(Button)({
 });
 export const StyledTitle = styled(Box)({
   fontWeight: "bold",
-  fontSize: "20px",
-  marginBottom: "5px",
+  fontSize: "17px",
+  margin: "0px 0 0 25px",
 });
 export const StyledDescription = styled(Box)({
   marginTop: "5px",
-  paddingBottom: "5px",
-  borderBottom: "1px solid #79b6f2",
+  padding: "0px 0 0 25px",
 });
 
 export const StyledTags = styled(Box)({
   display: "block",
-  position: "absolute",
-  right: "24%",
+  position: "fixed",
+  right: "26%",
   marginTop: "32px",
   padding: "5px 10px 10px",
   background: "#f3f3f3",
-  borderRadius: "4px",
-  width: "150px",
+  borderRadius: "20px",
+  boxShadow: "-2px 0px 30px -4px rgba(30, 31, 32, 0.26)",
+  transition: "all 1s ease",
+  width: "105px",
+  "&:hover": {
+    fontSize: "125%",
+    transition: "all 1s ease",
+    borderBottom: "1px solid #79b6f2",
+    boxShadow: "-1px 0px 16px 7px rgba(30, 31, 32, 0.26)",
+  },
+  "$:after": {},
 });
 export const StyledTag = styled(Box)({
   color: "black",
-  fontSize: "16px",
+  fontSize: "17px",
+  display: "flex",
+  margin: "0 auto",
+  justifyContent: "space-around",
+  transition: "all 0.2s ease",
+  "&:hover": {
+    fontSize: "125%",
+    transition: "all 0.2s ease",
+    borderBottom: "1px solid #79b6f2",
+  },
 });
-export const StyledPostContent = styled(Box)({});
+
+export const StyledTagA = styled(Box)({
+  color: "black",
+  textDecoration: "none",
+  "&:hover": {
+    cursor: "pointer",
+    color: "#79b6f2",
+  },
+});
+
+export const StyledPostContent = styled(Box)({
+  boxShadow: "-15px 16px 23px -9px rgba(30, 31, 32, 0.28)",
+  borderRadius: "30px",
+  border: "2px solid #1C6EA4",
+  minHeight: "118px",
+});
 //Pagination
 export const Pagination = styled(Box)({
   width: "33vw",
@@ -176,6 +216,7 @@ export const Pagination = styled(Box)({
   flexWrap: "wrap",
   flexDirection: "row",
   listStyleType: "none",
+  marginBottom: "50px",
 });
 export const StyledList = styled(Box)({
   "&:nth-child(1)": {
@@ -204,11 +245,12 @@ export const StyledFooter = styled(Box)({
   width: "99%",
   height: "58px",
   margin: " 0 auto",
-  position: "absolute",
+  position: "fixed",
   display: "flex",
   backgroundColor: "#f3f3f3",
   alignItems: "center",
   justifyContent: "center",
+  bottom: "0",
 });
 
 // Login/Regestration
@@ -260,7 +302,6 @@ export const InputDescr = styled(TextField)({ marginTop: "10px" });
 export const InputTags = styled(TextField)({
   marginTop: "10px",
 });
-export const StyleContainer = styled(Container)({});
 export const StyleCssBaseline = styled(CssBaseline)({});
 
 //icons
@@ -269,14 +310,35 @@ export const Like = styled(FavoriteBorderRoundedIcon)({
   width: "30px",
   height: "30px",
   paddingLeft: "10px",
+  "&:hover": {
+    transition: "all 0.2s ease",
+    width: "45px",
+    height: "45px",
+  },
 });
+
 export const DisLike = styled(FavoriteRoundedIcon)({
   width: "30px",
   height: "30px",
   paddingLeft: "10px",
+  "&:hover": {
+    transition: "all 0.2s ease",
+    width: "35px",
+    height: "35px",
+  },
 });
 export const Trash = styled(BackspaceIcon)({
   width: "30px",
   height: "30px",
   paddingLeft: "10px",
+  "&:hover": {
+    transition: "all 0.2s ease",
+    width: "35px",
+    height: "35px",
+  },
 });
+export const StyleTextPosts = styled(Container)({
+  padding: "0 0 0 0",
+});
+export const StyleWrapperIcons = styled(Container)({ display: "contents" });
+export const StyleContainer = styled(Container)({ display: "flex" });
