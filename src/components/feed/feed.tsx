@@ -45,121 +45,12 @@ interface postsInfo {
 }
 
 const Feed: React.FC<postsInfo> = observer(() => {
-  const navigation = () => {
-    return (
-      <StyledNavigation className="nav__item">
-        <StyledToggleLink
-          onClick={YourPosts}
-          component="a"
-          className="nav__link"
-        >
-          Your Posts
-        </StyledToggleLink>
-        <StyledToggleLink
-          onClick={GlobalPosts}
-          component="a"
-          className="nav__link"
-        >
-          Global Posts
-        </StyledToggleLink>
-      </StyledNavigation>
-    );
-  };
-
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [tagList, setTags] = useState("");
   const [email, setEmail] = useState(Store.email);
   const [username, setUsername] = useState(Store.username);
   const [updateArticles, setStatusArticles] = useState(false); // обновление состояния постов используется в axios и useEffect.
-
-  const vilabilityForm = () => {
-    const Handler = async (e: any) => {
-      e.preventDefault();
-      const a = tagList.trim().split(" ");
-
-      if (
-        (title && description) !== "" &&
-        title.length <= 20 &&
-        description.length <= 120
-      ) {
-        const postInfo = {
-          title,
-          description,
-          email,
-          tagList: a,
-          author: { username },
-        };
-        const token = localStorage.getItem("auth");
-        const config = {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        };
-        axios
-          .post(
-            "http://localhost:3000/api/articles",
-            {
-              article: postInfo,
-            },
-            config
-          )
-          .then((response) => {
-            console.log(response);
-            setStatusArticles(true);
-            e.target.reset();
-          })
-          .catch((error) => {
-            console.log(error);
-          });
-      } else {
-        alert(
-          "Enter fewer characters in the title. Dont leave any forms blank."
-        );
-      }
-    };
-
-    return (
-      <StyledFormApplicationFeed
-        onSubmit={Handler}
-        component="form"
-        className="app-form"
-        id="0"
-      >
-        What about you think?
-        <InputTitle
-          onChange={(e) => setTitle(e.target.value)}
-          multiline
-          variant="outlined"
-          id="standard-basic"
-          label="Title"
-          type="text"
-        />
-        <InputDescr
-          onChange={(e) => setDescription(e.target.value)}
-          id="outlined-multiline-static"
-          label="Description"
-          type="text"
-          multiline
-          rows={4}
-          variant="outlined"
-        />
-        <InputTags
-          onChange={(e) => setTags(e.target.value)}
-          type="text"
-          id="standard-basic"
-          label=""
-          variant="standard"
-          multiline
-          rows={1}
-        />
-        <MyButton type="submit" className="btn">
-          ADD POST!
-        </MyButton>
-      </StyledFormApplicationFeed>
-    );
-  };
-
   const [data, setData] = useState<
     {
       slug: string & number & symbol;
@@ -201,6 +92,67 @@ const Feed: React.FC<postsInfo> = observer(() => {
     }
   }, [updateArticles]); // зависимость обновляющая посты при отправке данных на сервер
 
+  const SearchPost = async (e: any) => {
+    e.preventDefault();
+    const tag = e.target.innerText;
+
+    axios
+      .get(`http://localhost:3000/api/articles?tag=${tag}`)
+      .then((response) => {
+        console.log(response);
+
+        const a = response.data.articles;
+        setData(a);
+        setStatusArticles(false);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
+  const Handler = async (e: any) => {
+    e.preventDefault();
+    const a = tagList.trim().split(" ");
+
+    if (
+      (title && description) !== "" &&
+      title.length <= 20 &&
+      description.length <= 120
+    ) {
+      const postInfo = {
+        title,
+        description,
+        email,
+        tagList: a,
+        author: { username },
+      };
+      const token = localStorage.getItem("auth");
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      axios
+        .post(
+          "http://localhost:3000/api/articles",
+          {
+            article: postInfo,
+          },
+          config
+        )
+        .then((response) => {
+          console.log(response);
+          setStatusArticles(true);
+          e.target.reset();
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      alert("Enter fewer characters in the title. Dont leave any forms blank.");
+    }
+  };
+
   // Удаление и лайк
   const DeleteItem = async (key: any) => {
     const config = {
@@ -217,8 +169,6 @@ const Feed: React.FC<postsInfo> = observer(() => {
       .catch((error) => {
         console.log(error);
       });
-
-    console.log("deleted no");
   };
 
   const LikeDisLike = async (key: any) => {
@@ -228,7 +178,6 @@ const Feed: React.FC<postsInfo> = observer(() => {
   //посты
   const YourPosts = async (e: any) => {
     console.log("click on YourPosts", e);
-
     axios
       .get(
         `http://localhost:3000/api/articles?author=${localStorage.getItem(
@@ -246,7 +195,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
       });
   };
 
-  const GlobalPosts = async (e: any) => {
+  const GlobalPosts = async (e: React.MouseEvent) => {
     console.log("click on GlobalPosts", e);
     axios
       .get(`http://localhost:3000/api/articles?author=`)
@@ -260,6 +209,69 @@ const Feed: React.FC<postsInfo> = observer(() => {
       });
   };
 
+  const navigation = () => {
+    return (
+      <StyledNavigation className="nav__item">
+        <StyledToggleLink
+          onClick={YourPosts}
+          component="a"
+          className="nav__link"
+        >
+          Your Posts
+        </StyledToggleLink>
+        <StyledToggleLink
+          onClick={GlobalPosts}
+          component="a"
+          className="nav__link"
+        >
+          Global Posts
+        </StyledToggleLink>
+      </StyledNavigation>
+    );
+  };
+
+  const vilabilityForm = () => {
+    return (
+      <StyledFormApplicationFeed
+        onSubmit={Handler}
+        component="form"
+        className="app-form"
+        id="0"
+      >
+        What about you think?
+        <InputTitle
+          onChange={(e) => setTitle(e.target.value)}
+          multiline
+          variant="outlined"
+          id="standard-basic"
+          label="Title"
+          type="text"
+        />
+        <InputDescr
+          onChange={(e) => setDescription(e.target.value)}
+          id="outlined-multiline-static"
+          label="Description"
+          type="text"
+          multiline
+          rows={4}
+          variant="outlined"
+        />
+        <InputTags
+          onChange={(e) => setTags(e.target.value)}
+          type="text"
+          id="standard-basic"
+          label=""
+          variant="standard"
+          multiline
+          rows={1}
+        />
+        <MyButton type="submit" className="btn">
+          ADD POST!
+        </MyButton>
+      </StyledFormApplicationFeed>
+    );
+  };
+
   return (
     <StyledFeed>
       <StyledRow className="row">
@@ -268,11 +280,8 @@ const Feed: React.FC<postsInfo> = observer(() => {
         </StyledFeedToggle>
         <StyledFormControl>
           {localStorage.getItem("auth") &&
-          window.location.href === "http://localhost:3001/profile" ? (
-            vilabilityForm
-          ) : (
-            <></>
-          )}
+            window.location.href === "http://localhost:3001/profile" &&
+            vilabilityForm}
         </StyledFormControl>
         {data.map((item) => {
           const date = item.createdAt.slice(0, 10);
@@ -306,12 +315,8 @@ const Feed: React.FC<postsInfo> = observer(() => {
                     </StyledDescription>
                   </StyleTextPosts>
                   <StyleWrapperIcons>
-                    <Trash
-                      onClick={() => {
-                        DeleteItem(item.slug);
-                      }}
-                    ></Trash>
-                    <DisLike onClick={LikeDisLike}></DisLike>
+                    <Trash onClick={() => DeleteItem(item.slug)} />
+                    <DisLike onClick={LikeDisLike} />
                   </StyleWrapperIcons>
                 </StyleContainer>
               </StyledPostContent>
@@ -321,29 +326,7 @@ const Feed: React.FC<postsInfo> = observer(() => {
 
         <StyledTags className="tags">
           {data.map((item) => {
-            const SearchPost = async (e: any) => {
-              e.preventDefault();
-              const tag = e.target.innerText;
-              console.log(item.tagList.slice());
-
-              axios
-                .get(`http://localhost:3000/api/articles?tag=${tag}`)
-                .then((response) => {
-                  console.log(response);
-
-                  const a = response.data.articles;
-                  setData(a);
-                  setStatusArticles(false);
-                })
-                .catch((error) => {
-                  console.log(error);
-                });
-            };
-
             if (item.tagList) {
-              const tens = item.tagList.filter((el) => el !== null);
-              console.log(tens, "tens");
-
               const tagsShorts = item.tagList.slice(0, 1);
               const tenTags = tagsShorts.slice(0, 10);
               return (
